@@ -1,72 +1,57 @@
-// app.js
 const express = require('express');
+const { MongoClient } = require('mongodb');
+
 const app = express();
+app.use(express.json()); // Middleware to parse JSON
 
-// Middleware
-app.use(express.json()); // Parse JSON request bodies
+const dbUser = "root";
+const dbPassword = "6EZOMHDcalieZHPD";
+const uri = `mongodb+srv://${dbUser}:${dbPassword}@sharecar.1yutnho.mongodb.net/?retryWrites=true&w=majority&appName=sharecar`;
 
-// Example GET route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express web service!' });
 });
 
-// Example POST route
-app.post('/data', (req, res) => {
+app.post('/data', async (req, res) => {
   const receivedData = req.body;
 
-  const dbUser = "root"
-  const dbPassword = "6EZOMHDcalieZHPD"
-
-  // connect to mongoDB
-  const { MongoClient } = require('mongodb');
-  const uri = "mongodb+srv://root:" + dbPassword + "@sharecar.1yutnho.mongodb.net/?retryWrites=true&w=majority&appName=sharecar";
-  // sign in to mongodb
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-  client.connect(err => {
-    if (err) {
-      console.error('MongoDB connection error:', err);
-      return;
-    }
-    console.log('Connected to MongoDB');
-
-    // Perform database operations here
-    const collection = client.db("sharecar").collection("users");
-    // Example: Insert a document
-    collection.insertOne(receivedData, (err, result) => {
-      if (err) {
-        console.error('Error inserting document:', err);
-      } else {
-        console.log('Document inserted:', result.ops);
-      }
-      client.close();
-    });
-
-    // returnn mongodb response
-    const response = {
-      message: 'Data received successfully',
-      data: receivedData,
-      dbResponse: 'Document inserted successfully'
-    };
-
-    // Send response
-    res.json(response);
+  const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
   });
 
+  try {
+    await client.connect();
+    console.log('✅ Connected to MongoDB');
+
+    const collection = client.db("sharecar").collection("users");
+    const result = await collection.insertOne(receivedData);
+    console.log('📦 Document inserted with _id:', result.insertedId);
+
+    res.json({
+      message: 'Data received and inserted successfully',
+      data: receivedData,
+      insertedId: result.insertedId
+    });
+
+  } catch (err) {
+    console.error('❌ MongoDB error:', err);
+    res.status(500).json({ error: 'Database error', details: err.message });
+  } finally {
+    await client.close();
+  }
 });
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Error handler
 app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
+  console.error('Server Error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
