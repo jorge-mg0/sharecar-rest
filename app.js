@@ -1,16 +1,11 @@
 // app.js
 const express = require('express');
-const morgan = require('morgan');
-const cors = require('cors');
-
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS
 app.use(express.json()); // Parse JSON request bodies
-app.use(morgan('dev')); // Logging middleware
 
-// Example route
+// Example GET route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express web service!' });
 });
@@ -28,7 +23,7 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
