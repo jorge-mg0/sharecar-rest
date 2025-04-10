@@ -13,7 +13,6 @@ app.get('/', (req, res) => {
 // Example POST route
 app.post('/data', (req, res) => {
   const receivedData = req.body;
-  res.json({ message: 'Data received successfully', data: receivedData });
 
   const dbUser = "root"
   const dbPassword = "6EZOMHDcalieZHPD"
@@ -48,6 +47,9 @@ app.post('/data', (req, res) => {
       data: receivedData,
       dbResponse: 'Document inserted successfully'
     };
+
+    // Send response
+    res.json(response);
   });
 
 });
