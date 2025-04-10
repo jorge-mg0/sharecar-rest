@@ -14,6 +14,35 @@ app.get('/', (req, res) => {
 app.post('/data', (req, res) => {
   const receivedData = req.body;
   res.json({ message: 'Data received successfully', data: receivedData });
+
+  const dbUser = "root"
+  const dbPassword = "6EZOMHDcalieZHPD"
+
+  // connect to mongoDB
+  const { MongoClient } = require('mongodb');
+  const uri = "mongodb+srv://root:<db_password>@sharecar.1yutnho.mongodb.net/?retryWrites=true&w=majority&appName=sharecar";
+  // sign in to mongodb
+  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  client.connect(err => {
+    if (err) {
+      console.error('MongoDB connection error:', err);
+      return;
+    }
+    console.log('Connected to MongoDB');
+
+    // Perform database operations here
+    const collection = client.db("test").collection("devices");
+    // Example: Insert a document
+    collection.insertOne(receivedData, (err, result) => {
+      if (err) {
+        console.error('Error inserting document:', err);
+      } else {
+        console.log('Document inserted:', result.ops);
+      }
+      client.close();
+    });
+  });
+
 });
 
 // 404 handler
