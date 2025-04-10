@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express web service!' });
 });
 
-app.get('/getTrip', async (req, res) => {
+app.get('/getTrips', async (req, res) => {
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
