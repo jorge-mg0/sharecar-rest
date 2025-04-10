@@ -20,7 +20,7 @@ app.post('/data', (req, res) => {
 
   // connect to mongoDB
   const { MongoClient } = require('mongodb');
-  const uri = "mongodb+srv://root:<db_password>@sharecar.1yutnho.mongodb.net/?retryWrites=true&w=majority&appName=sharecar";
+  const uri = "mongodb+srv://root:" + dbPassword + "@sharecar.1yutnho.mongodb.net/?retryWrites=true&w=majority&appName=sharecar";
   // sign in to mongodb
   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
   client.connect(err => {
