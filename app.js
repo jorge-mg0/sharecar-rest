@@ -31,7 +31,7 @@ app.post('/data', (req, res) => {
     console.log('Connected to MongoDB');
 
     // Perform database operations here
-    const collection = client.db("test").collection("devices");
+    const collection = client.db("sharecar").collection("users");
     // Example: Insert a document
     collection.insertOne(receivedData, (err, result) => {
       if (err) {
@@ -41,6 +41,13 @@ app.post('/data', (req, res) => {
       }
       client.close();
     });
+
+    // returnn mongodb response
+    const response = {
+      message: 'Data received successfully',
+      data: receivedData,
+      dbResponse: 'Document inserted successfully'
+    };
   });
 
 });
