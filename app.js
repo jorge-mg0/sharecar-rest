@@ -12,7 +12,32 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express web service!' });
 });
 
-app.post('/data', async (req, res) => {
+app.get('/getTrip', async (req, res) => {
+  const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  });
+
+  try {
+    await client.connect();
+    console.log('✅ Connected to MongoDB');
+
+    const collection = client.db("sharecar").collection("users");
+    const data = await collection.find({}).toArray();
+    console.log('📦 Data retrieved:', data);
+
+    res.json(data);
+
+  } catch (err) {
+    console.error('❌ MongoDB error:', err);
+    res.status(500).json({ error: 'Database error', details: err.message });
+  } finally {
+    await client.close();
+  }
+}
+);
+
+app.post('/postTrip', async (req, res) => {
   const receivedData = req.body;
 
   const client = new MongoClient(uri, {
