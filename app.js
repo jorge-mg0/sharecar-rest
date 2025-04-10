@@ -1,9 +1,39 @@
-const express = require("express");
+// app.js
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+
 const app = express();
-const port = process.env.PORT || 3001;
 
+// Middleware
+app.use(cors()); // Enable CORS
+app.use(express.json()); // Parse JSON request bodies
+app.use(morgan('dev')); // Logging middleware
 
-const server = app.listen(port, () => console.log(`Hola app listening on port ${port}!`));
+// Example route
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the Express web service!' });
+});
 
-server.keepAliveTimeout = 120 * 1000;
-server.headersTimeout = 120 * 1000;
+// Example POST route
+app.post('/data', (req, res) => {
+  const receivedData = req.body;
+  res.json({ message: 'Data received successfully', data: receivedData });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
