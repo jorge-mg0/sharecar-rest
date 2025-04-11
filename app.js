@@ -22,7 +22,7 @@ app.get('/getTrips', async (req, res) => {
     await client.connect();
     console.log('✅ Connected to MongoDB');
 
-    const collection = client.db("sharecar").collection("users");
+    const collection = client.db("sharecar").collection("trips");
     const data = await collection.find({}).toArray();
     console.log('📦 Data retrieved:', data);
 
@@ -49,7 +49,7 @@ app.post('/postTrip', async (req, res) => {
     await client.connect();
     console.log('✅ Connected to MongoDB');
 
-    const collection = client.db("sharecar").collection("users");
+    const collection = client.db("sharecar").collection("trips");
     const result = await collection.insertOne(receivedData);
     console.log('📦 Document inserted with _id:', result.insertedId);
 
