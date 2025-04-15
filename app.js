@@ -22,7 +22,7 @@ app.post('/login', async (req, res) => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
-  const user = { email, password };
+  const user = { email, hashedPassword };
 
   try {
     await client.connect();
