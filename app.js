@@ -2,6 +2,7 @@ import express from 'express';
 import { MongoClient } from 'mongodb';
 import { checkUser } from './database/users.js';
 import md5 from 'md5';
+import { getAllTrips, addTrip } from './database/trips.js';
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 
@@ -52,29 +53,16 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/getTrips', async (req, res) => {
-  const client = new MongoClient(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-
   try {
-    await client.connect();
-    console.log('✅ Connected to MongoDB');
-
-    const collection = client.db("sharecar").collection("trips");
-    const data = await collection.find({}).toArray();
-    console.log('📦 Data retrieved:', data);
-
-    res.json(data);
-
+    console.log('✅ Fetching trips from database');
+    const trips = await getAllTrips();
+    console.log('📦 Data retrieved:', trips);
+    res.json(trips);
   } catch (err) {
-    console.error('❌ MongoDB error:', err);
+    console.error('❌ Error fetching trips:', err);
     res.status(500).json({ error: 'Database error', details: err.message });
-  } finally {
-    await client.close();
   }
-}
-);
+});
 
 app.post('/postTrip', async (req, res) => {
   const receivedData = req.body;
@@ -83,30 +71,21 @@ app.post('/postTrip', async (req, res) => {
   if (!user) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  const client = new MongoClient(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
 
   try {
-    await client.connect();
-    console.log('✅ Connected to MongoDB');
-
-    const collection = client.db("sharecar").collection("trips");
-    const result = await collection.insertOne({ receivedData, idUser: user._id });
-    console.log('📦 Document inserted with _id:', result.insertedId);
+    console.log('✅ Adding new trip to database');
+    const tripData = { ...receivedData, idUser: user._id };
+    const newTrip = await addTrip(tripData);
+    console.log('📦 Trip added with _id:', newTrip._id);
 
     res.json({
-      message: 'Data received and inserted successfully',
+      message: 'Trip added successfully',
       data: receivedData,
-      insertedId: result.insertedId
+      insertedId: newTrip._id
     });
-
   } catch (err) {
-    console.error('❌ MongoDB error:', err);
+    console.error('❌ Error adding trip:', err);
     res.status(500).json({ error: 'Database error', details: err.message });
-  } finally {
-    await client.close();
   }
 });
 
