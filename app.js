@@ -35,7 +35,7 @@ app.post('/login', async (req, res) => {
       console.log('User found:', result);
       if (hashedPassword !== result.password) {
         console.log('Incorrect password');
-        return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({ error: 'Invalid email or password' });
       }
       res.json({ message: 'Login successful', user: result.email });
     } else {
