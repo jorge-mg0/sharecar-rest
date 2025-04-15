@@ -27,6 +27,7 @@ app.post('/login', async (req, res) => {
   try {
     await client.connect();
     const collection = client.db("sharecar").collection("users");
+    console.log(user)
     const result = await collection.findOneAndUpdate(user, { $set: { lastLogin: today } }, { returnDocument: 'after' });
 
     if (result) {
