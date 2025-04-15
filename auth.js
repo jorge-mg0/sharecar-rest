@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-
+import md5 from 'md5';
 export const checkUser = async (email, token) => {
   const client = new MongoClient(process.env.DATABASE_URL, {
     useNewUrlParser: true,
