@@ -10,7 +10,7 @@ export const find = async (collectionName, query, findOne = false) => {
     await client.connect();
     const database = client.db('sharecar');
     const collection = database.collection(collectionName);
-    const result = findOne ? await collection.findOne(query) : await collection.find(query);
+    const result = findOne ? await collection.findOne(query) : await collection.find(query).toArray();
     return result;
   } catch (error) {
     console.error('Error finding:', error);
