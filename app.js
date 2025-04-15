@@ -110,6 +110,20 @@ app.post('/postTrip', async (req, res) => {
   }
 });
 
+app.post('/refresh', async (req, res) => {
+  const token = req.headers.authorization;
+  const user = await checkUser(receivedData.email, token);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const newToken = md5(today + Math.random() * 1000);
+  await collection.updateOne(
+    { email: user.email },
+    { $set: { token: newToken, lastLogin: today } }
+  );
+  res.json({ message: 'Refresh successful', token: newToken });
+})
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
