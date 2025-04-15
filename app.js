@@ -4,10 +4,6 @@ const { MongoClient } = require('mongodb');
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 
-const dbUser = "root";
-const dbPassword = "6EZOMHDcalieZHPD";
-const uri = `mongodb+srv://${dbUser}:${dbPassword}@sharecar.1yutnho.mongodb.net/?retryWrites=true&w=majority&appName=sharecar`;
-
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express web service!' });
 });
@@ -20,7 +16,7 @@ app.post('/login', async (req, res) => {
 
   const today = new Date().toISOString();
   const newToken = md5(today + Math.random() * 1000);
-  const client = new MongoClient(uri, {
+  const client = new MongoClient(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
@@ -42,7 +38,7 @@ app.post('/login', async (req, res) => {
         { email: user.email },
         { $set: { token: newToken, lastLogin: today } }
       );
-      res.json({ message: 'Login successful', token: newToken });
+      res.json({ message: 'Login successful', user: result.email, token: newToken });
     } else {
       console.log('User not found');
       res.status(401).json({ error: 'Invalid email or password' });
@@ -56,7 +52,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/getTrips', async (req, res) => {
-  const client = new MongoClient(uri, {
+  const client = new MongoClient(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
@@ -83,7 +79,7 @@ app.get('/getTrips', async (req, res) => {
 app.post('/postTrip', async (req, res) => {
   const receivedData = req.body;
 
-  const client = new MongoClient(uri, {
+  const client = new MongoClient(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
