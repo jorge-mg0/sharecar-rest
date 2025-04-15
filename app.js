@@ -17,6 +17,7 @@ app.post('/login', async (req, res) => {
 
   const md5 = require('md5');
   const hashedPassword = md5(password);
+  const today = new Date().toISOString();
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -26,10 +27,10 @@ app.post('/login', async (req, res) => {
   try {
     await client.connect();
     const collection = client.db("sharecar").collection("users");
-    const result = await collection.findOne(user);
+    const result = await collection.findOneAndUpdate(user, { $set: { lastLogin: today } }, { returnDocument: 'after' });
 
     if (result) {
-      console.log('User found:', result.email);
+      console.log('User found:', result);
       res.json({ message: 'Login successful', user: result.email });
     } else {
       console.log('User not found');
