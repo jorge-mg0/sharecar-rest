@@ -117,13 +117,8 @@ app.post('/refresh', async (req, res) => {
   if (!user) {
     return res.status(401).json({ error: '🚫 Unauthorized' });
   }
-  const today = new Date().toISOString();
-  const newToken = md5(today + Math.random() * 1000);
-  await collection.updateOne(
-    { email: user.email },
-    { $set: { token: newToken, lastLogin: today } }
-  );
-  res.json({ message: '✅ Refresh successful', token: newToken });
+
+  res.json({ message: '✅ Refresh successful', token: user.token });
 })
 
 app.use((req, res) => {
