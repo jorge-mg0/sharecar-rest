@@ -1,6 +1,6 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
-import { checkUser } from './auth.js';
+import { checkUser } from './database/users.js';
 import md5 from 'md5';
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
@@ -118,6 +118,17 @@ app.post('/refresh', async (req, res) => {
   }
 
   res.json({ message: '✅ Refresh successful', token: user.token });
+})
+
+app.post('/logout', async (req, res) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const user = await checkUser(req.body.email, token);
+
+  if (user) {
+    await removeToken(user.email);
+  }
+
+  return res.json({ message: '✅ Logout successful' });
 })
 
 app.use((req, res) => {
