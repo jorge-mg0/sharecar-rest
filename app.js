@@ -40,7 +40,7 @@ app.post('/login', async (req, res) => {
       res.json({ message: 'Login successful', user: result.email });
     } else {
       console.log('User not found');
-      res.status(401).json({ message: 'Invalid email or password' });
+      res.status(401).json({ error: 'Invalid email or password' });
     }
   } catch (err) {
     console.error('MongoDB error:', err);
