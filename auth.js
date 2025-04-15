@@ -1,7 +1,10 @@
 import { MongoClient } from 'mongodb';
 
 export const checkUser = async (email, token) => {
-  const client = new MongoClient(process.env.MONGODB_URI);
+  const client = new MongoClient(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  });
   try {
     await client.connect();
     const database = client.db('sharecar');
