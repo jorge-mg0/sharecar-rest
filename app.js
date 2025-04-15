@@ -112,16 +112,17 @@ app.post('/postTrip', async (req, res) => {
 
 app.post('/refresh', async (req, res) => {
   const token = req.headers.authorization;
+  console.log(req.body);
   const user = await checkUser(req.body.email, token);
   if (!user) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: '🚫 Unauthorized' });
   }
   const newToken = md5(today + Math.random() * 1000);
   await collection.updateOne(
     { email: user.email },
     { $set: { token: newToken, lastLogin: today } }
   );
-  res.json({ message: 'Refresh successful', token: newToken });
+  res.json({ message: '✅ Refresh successful', token: newToken });
 })
 
 app.use((req, res) => {
