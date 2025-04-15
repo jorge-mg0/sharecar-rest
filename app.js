@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express web service!' });
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   const client = new MongoClient(uri, {
@@ -20,10 +20,12 @@ app.post('/login', (req, res) => {
     useUnifiedTopology: true
   });
   const user = { email, password };
+
   try {
     await client.connect();
     const collection = client.db("sharecar").collection("users");
     const result = await collection.findOne(user);
+
     if (result) {
       console.log('User found:', result);
       res.json({ message: 'Login successful', user: result });
@@ -34,11 +36,10 @@ app.post('/login', (req, res) => {
   } catch (err) {
     console.error('MongoDB error:', err);
     res.status(500).json({ error: 'Database error', details: err.message });
-  }
-  finally {
+  } finally {
     await client.close();
   }
-})
+});
 
 app.get('/getTrips', async (req, res) => {
   const client = new MongoClient(uri, {
