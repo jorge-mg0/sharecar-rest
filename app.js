@@ -15,6 +15,8 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
+  const md5 = require('md5');
+  const hashedPassword = md5(password);
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -27,8 +29,8 @@ app.post('/login', async (req, res) => {
     const result = await collection.findOne(user);
 
     if (result) {
-      console.log('User found:', result);
-      res.json({ message: 'Login successful', user: result });
+      console.log('User found:', result.email);
+      res.json({ message: 'Login successful', user: result.email });
     } else {
       console.log('User not found');
       res.status(401).json({ message: 'Invalid email or password' });
