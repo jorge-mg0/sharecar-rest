@@ -10,7 +10,6 @@ export const checkUser = async (email, token) => {
     const database = client.db('sharecar');
     const collection = database.collection('users');
     const user = await collection.findOne({ email: email, token: token });
-
     if (user) {
       const today = new Date().toISOString();
       const newToken = md5(today + Math.random() * 1000);

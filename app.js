@@ -12,7 +12,6 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  const md5 = require('md5');
   const hashedPassword = md5(password);
 
   const today = new Date().toISOString();
