@@ -1,8 +1,13 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
-import { checkUser } from './database/users.js';
+import { checkUser, removeToken } from './database/users.js';
 import md5 from 'md5';
 import { getAllTrips, addTrip } from './database/trips.js';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 
@@ -114,7 +119,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error('Server Error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });

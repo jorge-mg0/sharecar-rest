@@ -1,4 +1,3 @@
-import { MongoClient } from 'mongodb';
 import md5 from 'md5';
 import { find, insert, update } from './database.js';
 
