@@ -1,3 +1,5 @@
+import { MongoClient } from 'mongodb';
+
 export const find = async (collectionName, query, findOne = false) => {
   const client = new MongoClient(process.env.DATABASE_URL, {
     useNewUrlParser: true,
