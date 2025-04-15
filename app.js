@@ -1,6 +1,6 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
-import { checkUser } from './auth';
+import { checkUser } from './auth.js';
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 
