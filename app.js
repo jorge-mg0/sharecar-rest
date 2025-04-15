@@ -29,10 +29,14 @@ app.post('/login', async (req, res) => {
     await client.connect();
     const collection = client.db("sharecar").collection("users");
     console.log(user)
-    const result = await collection.findOneAndUpdate(user, { $set: { lastLogin: today, token: newToken } }, { returnDocument: 'after' });
+    const result = await collection.findOne({ email: user.email });
 
     if (result) {
       console.log('User found:', result);
+      if (hashedPassword !== result.password) {
+        console.log('Incorrect password');
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
       res.json({ message: 'Login successful', user: result.email });
     } else {
       console.log('User not found');
