@@ -1,6 +1,6 @@
-const express = require('express');
-const { MongoClient } = require('mongodb');
-const { checkUser } = require('./auth');
+import express from 'express';
+import { MongoClient } from 'mongodb';
+import { checkUser } from './auth';
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 
