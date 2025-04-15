@@ -1,7 +1,7 @@
 import { find, insert, update, remove } from './database.js';
 
 export const getAllTrips = async () => {
-  const trips = await find('trips');
+  const trips = await find('trips', {}, false);
   return trips;
 }
 

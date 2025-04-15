@@ -44,6 +44,8 @@ app.post('/login', async (req, res) => {
         { email: user.email },
         { $set: { token: newToken, lastLogin: today } }
       );
+
+      console.log('✅ Login successful', result.email, newToken);
       res.json({ message: 'Login successful', user: result.email, token: newToken });
     } else {
       console.log('User not found');
@@ -112,7 +114,8 @@ app.post('/logout', async (req, res) => {
     await removeToken(user.email);
   }
 
-  return res.json({ message: '✅ Logout successful' });
+  console.log('🚪 Logout successful', user.email);
+  return res.json({ message: '🚪 Logout successful' });
 })
 
 app.use((req, res) => {
