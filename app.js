@@ -12,6 +12,34 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express web service!' });
 });
 
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  });
+  const user = { email, password };
+  try {
+    await client.connect();
+    const collection = client.db("sharecar").collection("users");
+    const result = await collection.findOne(user);
+    if (result) {
+      console.log('User found:', result);
+      res.json({ message: 'Login successful', user: result });
+    } else {
+      console.log('User not found');
+      res.status(401).json({ message: 'Invalid email or password' });
+    }
+  } catch (err) {
+    console.error('MongoDB error:', err);
+    res.status(500).json({ error: 'Database error', details: err.message });
+  }
+  finally {
+    await client.close();
+  }
+})
+
 app.get('/getTrips', async (req, res) => {
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
