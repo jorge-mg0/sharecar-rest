@@ -9,7 +9,6 @@ export const checkUser = async (email, token) => {
     await client.connect();
     const database = client.db('sharecar');
     const collection = database.collection('users');
-
     const user = await collection.findOne({ email: email, token: token });
 
     if (user) {

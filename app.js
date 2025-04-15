@@ -1,6 +1,7 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
 import { checkUser } from './auth.js';
+import md5 from 'md5';
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
 
