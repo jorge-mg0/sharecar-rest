@@ -78,7 +78,11 @@ app.get('/getTrips', async (req, res) => {
 
 app.post('/postTrip', async (req, res) => {
   const receivedData = req.body;
-
+  const token = req.headers.authorization;
+  const user = await checkUser(receivedData.email, token);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   const client = new MongoClient(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -89,7 +93,7 @@ app.post('/postTrip', async (req, res) => {
     console.log('✅ Connected to MongoDB');
 
     const collection = client.db("sharecar").collection("trips");
-    const result = await collection.insertOne(receivedData);
+    const result = await collection.insertOne({ receivedData, idUser: user._id });
     console.log('📦 Document inserted with _id:', result.insertedId);
 
     res.json({

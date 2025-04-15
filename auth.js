@@ -1,13 +1,13 @@
 const { MongoClient } = require('mongodb');
 
-export const checkToken = async (token) => {
+export const checkUser = async (email, token) => {
   const client = new MongoClient(process.env.MONGODB_URI);
   try {
     await client.connect();
     const database = client.db('sharecar');
     const collection = database.collection('users');
 
-    const user = await collection.findOne({ token: token });
+    const user = await collection.findOne({ email: email, token: token });
 
     if (user) {
       return user; // Token is valid
