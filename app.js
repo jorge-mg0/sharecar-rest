@@ -17,8 +17,9 @@ app.post('/login', async (req, res) => {
 
   const md5 = require('md5');
   const hashedPassword = md5(password);
-  const newToken = md5(email + hashedPassword);
+
   const today = new Date().toISOString();
+  const newToken = md5(today + Math.random() * 1000);
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -28,7 +29,6 @@ app.post('/login', async (req, res) => {
   try {
     await client.connect();
     const collection = client.db("sharecar").collection("users");
-    console.log(user)
     const result = await collection.findOne({ email: user.email });
 
     if (result) {
@@ -37,7 +37,12 @@ app.post('/login', async (req, res) => {
         console.log('Incorrect password');
         return res.status(401).json({ error: 'Invalid email or password' });
       }
-      res.json({ message: 'Login successful', user: result.email });
+
+      await collection.updateOne(
+        { email: user.email },
+        { $set: { token: newToken, lastLogin: today } }
+      );
+      res.json({ message: 'Login successful', token: newToken });
     } else {
       console.log('User not found');
       res.status(401).json({ error: 'Invalid email or password' });
