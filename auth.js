@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
 
 export const checkUser = async (email, token) => {
   const client = new MongoClient(process.env.MONGODB_URI);
