@@ -112,9 +112,7 @@ app.post('/postTrip', async (req, res) => {
 
 app.post('/refresh', async (req, res) => {
   const token = req.headers.authorization;
-  const user = await checkUser(receivedData.email, token);
-  console.log(user);
-  console.log(token);
+  const user = await checkUser(req.body.email, token);
   if (!user) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
